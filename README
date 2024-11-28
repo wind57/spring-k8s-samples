@@ -20,7 +20,7 @@
 
    As such, for this sample, I am going to use the "bootstrap" mode, though if properly configured
    from the beginning, config data will work as well. In my work projects (where we use spring-cloud-kubernetes),
-   I usually "develop" with bootstrap and when I know all is good, switch to bootstrap.
+   I usually "develop" with bootstrap and when I know all is good, switch to config data.
 
 ----------------------------------------------------------------------------------------------------------------------
 
@@ -48,13 +48,13 @@
            (you must get a 'yes')
 
        "kubectl auth can-i list services --as=system:serviceaccount:default:spring-cloud-kubernetes-configuration-watcher -n default"
-           (you must get a 'test')
+           (you must get a 'yes')
 
        "kubectl auth can-i list services --as=system:serviceaccount:a:spring-cloud-kubernetes-configuration-watcher -n default"
-           (you must get a 'test')
+           (you must get a 'yes')
 
         "kubectl auth can-i list services --as=system:serviceaccount:a:spring-cloud-kubernetes-configuration-watcher -n a"
-           (you must get a 'test')
+           (you must get a 'yes')
 
  - create deployments:
       "kubectl apply -f 3_deployments.yaml"
@@ -84,7 +84,7 @@
 
    Then run such a command to see that the service can be accessed:
       "kubectl exec wiremock -- curl http://sample-in-a.a.svc.cluster.local:8080/value"
-      "kubectl exec wiremock -- curl http://sample-in-default.default.svc.cluster.local:8080/actuator/health"
+      "kubectl exec wiremock -- curl http://sample-in-default.default.svc.cluster.local:8080/value"
 
  - check the logs of configuration watcher, you must see a line like this:
         added configmap informer for namespace : default with filter : spring.cloud.kubernetes.config.informer.enabled=true
