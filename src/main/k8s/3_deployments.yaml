@@ -3,62 +3,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sample-in-a
-  namespace: a
+  name: sample
   labels:
-    app: sample-in-a
+    app: sample
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sample-in-a
+      app: sample
   template:
     metadata:
       labels:
-        app: sample-in-a
+        app: sample
     spec:
       serviceAccountName: spring-cloud-kubernetes-configuration-watcher
       containers:
-        - name: sample-in-a
+        - name: sample
           image: "sample:latest"
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
               protocol: TCP
 
-        # only needed if you want bootstrap enabled
           env:
             - name: SPRING_CLOUD_BOOTSTRAP_ENABLED
-              value: "TRUE"
-
----
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sample-in-default
-  labels:
-    app: sample-in-default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: sample-in-default
-  template:
-    metadata:
-      labels:
-        app: sample-in-default
-    spec:
-      serviceAccountName: spring-cloud-kubernetes-configuration-watcher
-      containers:
-        - name: sample-in-default
-          image: "sample:latest"
-          imagePullPolicy: Never
-          ports:
-            - containerPort: 8080
-              protocol: TCP
-
-          # only needed if you want bootstrap enabled
-          env:
-            - name: SPRING_CLOUD_BOOTSTRAP_ENABLED
-              value: "TRUE"
+              value: "true"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties(ConfigProperties.class)
+@EnableConfigurationProperties({ ConfigProperties.class, ConfigPropertiesDev.class })
 public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);

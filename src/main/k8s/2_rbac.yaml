@@ -15,7 +15,7 @@ metadata:
   labels:
     app: spring-cloud-kubernetes-configuration-watcher
   name: spring-cloud-kubernetes-configuration-watcher
-  namespace: a
+  namespace: default
 
 ---
 
@@ -37,7 +37,7 @@ subjects:
 
   - kind: ServiceAccount
     name: spring-cloud-kubernetes-configuration-watcher
-    namespace: a
+    namespace: default
 ---
 
 
