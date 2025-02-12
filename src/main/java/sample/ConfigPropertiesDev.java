@@ -2,7 +2,7 @@ package sample;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "my.dev")
+@ConfigurationProperties(prefix = "my.weird")
 public class ConfigPropertiesDev {
 
     private String property;

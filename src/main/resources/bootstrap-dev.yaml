@@ -5,4 +5,4 @@ spring:
         enable-api: true
         sources:
           - namespace: default
-            name: sample-configmap-dev
+            name: sample-configmap-weird-name
