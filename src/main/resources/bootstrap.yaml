@@ -5,13 +5,17 @@ logging:
         cloud:
           kubernetes: debug
 
+management:
+  endpoint:
+    restart:
+      enabled: true
+    refresh:
+      enabled: true
+    shutdown:
+      enabled: true
+  endpoints.web.exposure.include: health,info,refresh,shutdown,env,restart
+
 spring:
-
-  # -- only needed if I want to run this as-is, not deployed
-  # -- meaning running as a main from intellij, connecting to the local cluster
-  # main:
-    # cloud-platform: kubernetes
-
   cloud:
     kubernetes:
       config:

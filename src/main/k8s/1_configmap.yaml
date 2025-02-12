@@ -1,12 +1,7 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: sample-configmap
+  name: sample-configmap-weird-name
   namespace: default
-  labels:
-    spring.cloud.kubernetes.config.informer.enabled: 'true'
-    spring.cloud.kubernetes.config: 'true'
-  annotations:
-    spring.cloud.kubernetes.configmap.apps: 'sample-in-a, sample-in-default'
 data:
-  my.property: "changed"
+  my.weird.property: "my.weird.property"
