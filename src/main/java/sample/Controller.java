@@ -4,22 +4,19 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 @RestController
 public class Controller {
 
     private final ConfigProperties configProperties;
 
-    private final ConfigPropertiesDev configPropertiesDev;
+    private final ConfigPropertiesWeird configPropertiesWeird;
 
     private final Environment env;
 
-    public Controller(ConfigProperties configProperties, ConfigPropertiesDev configPropertiesDev,
+    public Controller(ConfigProperties configProperties, ConfigPropertiesWeird configPropertiesWeird,
             Environment env) {
         this.configProperties = configProperties;
-        this.configPropertiesDev = configPropertiesDev;
+        this.configPropertiesWeird = configPropertiesWeird;
         this.env = env;
     }
 
@@ -28,9 +25,9 @@ public class Controller {
         return configProperties.property();
     }
 
-    @GetMapping("/valueDev")
+    @GetMapping("/valueWeird")
     public String getValueDev() {
-        return configPropertiesDev.property();
+        return configPropertiesWeird.property();
     }
 
     @GetMapping("/env")

@@ -1,7 +1,7 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: sample-configmap-dev
+  name: sample-configmap-weird
   namespace: default
 data:
-  my.dev.property: "my.dev.property"
+  my.weird.property: "my.weird.property"

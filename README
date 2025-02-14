@@ -15,11 +15,9 @@
  - find the IP of the pod:
    'kubectl get pods -o wide'
 
- - issue 'curl 10.244.0.5:8080/value' (nothing is returned)
+ - issue 'curl 10.244.0.5:8080/value' ('my.property' is returned)
 
- - issue 'curl 10.244.0.5:8080/valueDev' ('my.dev.property' is returned)
-
- proves that the correct file is read.
+ - issue 'curl 10.244.0.5:8080/valueWeird' (nothing is returned)
 
 
 
