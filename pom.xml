@@ -7,17 +7,23 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version>
+        <version>4.0.2</version>
         <relativePath />
     </parent>
 
+    <modules>
+        <module>front</module>
+        <module>backend</module>
+    </modules>
+
     <groupId>org.wind57</groupId>
-    <artifactId>spring-k8s-watcher-multiple-namespaces</artifactId>
+    <artifactId>spring-k8s-loadbalancer</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -27,34 +33,11 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <type>pom</type>
-                <version>2023.0.3</version>
+                <version>2025.1.1</version>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-kubernetes-fabric8-config</artifactId>
-        </dependency>
-
-    </dependencies>
 
     <build>
         <plugins>
@@ -62,10 +45,10 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <imageName>sample:latest</imageName>
+                    <imageName>docker.io/springcloud/${project.artifactId}:${project.version}</imageName>
                     <image>
                         <env>
-                            <BP_JVM_VERSION>21</BP_JVM_VERSION>
+                            <BP_JVM_VERSION>25</BP_JVM_VERSION>
                         </env>
                     </image>
                 </configuration>
@@ -77,32 +60,9 @@
                             <goal>build-image-no-fork</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <id>repackage</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <!-- Workaround until Paketo build packs support arm64 a.k.a. aarch64
-		     See https://github.com/buildpacks/pack/issues?q=is%3Aissue+is%3Aopen+arm64 -->
-        <profile>
-            <id>build-image-aarch64</id>
-            <activation>
-                <os>
-                    <arch>aarch64</arch>
-                </os>
-            </activation>
-            <properties>
-                <spring-boot.build-image.builder>dashaun/builder:tiny</spring-boot.build-image.builder>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>

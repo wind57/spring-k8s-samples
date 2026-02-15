@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-deployment
+  namespace: default
+  labels:
+    app.kubernetes.io/name: front
+    app.kubernetes.io/component: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: front
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: front
+        app.kubernetes.io/component: front
+    spec:
+      serviceAccountName: app-service-account
+      containers:
+        - name: front
+          image: docker.io/springcloud/front:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+
+            - containerPort: 5005
+              name: jdwp
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "1000m"
+            limits:
+              memory: "1024Mi"
+              cpu: "2000m"
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          env:
+            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_KUBERNETES_CLIENT_LOADBALANCER
+              value: DEBUG
+            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_KUBERNETES_COMMONS_LOADBALANCER
+              value: DEBUG
+            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_KUBERNETES_CLIENT_DISCOVERY
+              value: DEBUG
+            - name: JAVA_TOOL_OPTIONS
+              value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
