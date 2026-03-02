@@ -1,101 +1,24 @@
-
-   !!! IMPORTANT !!!
-
-   There are two ways in which we can "read" sources (configmap/secret): bootstrap, also called the legacy mode
-   and "config data", the new mode. Config data, unlike bootstrap, does not require any bootstrap.yaml files,
-   but it has one issue that makes its usage a bit complicated:
-
-            https://github.com/spring-cloud/spring-cloud-kubernetes/issues/1173
-
-    In simple words, users are basically "blind" and no logs are reported when using this mode.
-    Imagine you have an app that needs to read some configmap, but the RBAC rules are incorrect.
-    In this case, the logs are going to be "clean" and no error will be reported. The error still
-    happens, but its not reported in logs.
-    To inflict more pain:
-
-     a) config data is the default mode that we currently use
-     b) switching to the bootstrap mode where this issue does not happen, means code changes:
-        you need to create another "bootstrap.yaml" and use an env variable (a property will not work)
-        to enable this mode.
-
-   As such, for this sample, I am going to use the "bootstrap" mode, though if properly configured
-   from the beginning, config data will work as well. In my work projects (where we use spring-cloud-kubernetes),
-   I usually "develop" with bootstrap and when I know all is good, switch to bootstrap.
-
-----------------------------------------------------------------------------------------------------------------------
-
-
  -  assumes you hava java-21
- -  running 'mvn clean install' should build the image
+ -  running 'mvn clean install' will build the image
  -  you can check that via 'docker images | grep sample'
 
  -  create local cluster: 'kind create cluster'
  -  load the image into the cluster : 'kind load docker-image sample:latest'
 
- - create namespaces:
-      "cd src/main/k8s"
-      "kubectl apply -f 0_namespaces.yaml"
+ - deploy all manifests from k8s directory:
+    'kubectl apply -f .'
 
- -  create configmap:
-      "kubectl apply -f 1_configmap.yaml"
+ - run 'docker ps' to find the container ID
 
- -  create rbac :
-      "kubectl apply -f 2_rbac.yaml"
+ - run 'docker exec -u 0 --privileged -it <CONTAINER_ID> bash'
 
- - check that rbac is correctly set-up (only one check here)
+ - find the IP of the pod:
+   'kubectl get pods -o wide'
 
-       "kubectl auth can-i list services --as=system:serviceaccount:default:spring-cloud-kubernetes-configuration-watcher -n a"
-           (you must get a 'yes')
+ - issue 'curl 10.244.0.5:8080/value' ('my.property' is returned)
 
-       "kubectl auth can-i list services --as=system:serviceaccount:default:spring-cloud-kubernetes-configuration-watcher -n default"
-           (you must get a 'test')
+ - issue 'curl 10.244.0.5:8080/valueWeird' (nothing is returned)
 
-       "kubectl auth can-i list services --as=system:serviceaccount:a:spring-cloud-kubernetes-configuration-watcher -n default"
-           (you must get a 'test')
-
-        "kubectl auth can-i list services --as=system:serviceaccount:a:spring-cloud-kubernetes-configuration-watcher -n a"
-           (you must get a 'test')
-
- - create deployments:
-      "kubectl apply -f 3_deployments.yaml"
-
- -  verify that the pods are up and running:
-
-    exec into the cluster, by finding the ID of it first:
-       "docker ps | grep kind | awk '{ print $1 }'"
-       "docker exec -u 0 --privileged -it 2eec1b8eaab4 bash"
-
-    find the IPs of the pods:
-       "kubectl get pods -o wide --all-namespaces"
-
-    with the 'IP' column above issue a curl to both pods:
-       "curl 10.244.0.3:8080/actuator/health"
-
- - verify that configmap was correctly wired and properties from it are available:
-       "curl 10.244.0.3:8080/value"
-       (you should see the 'initial' response)
-
- - create services:
-      "kubectl apply -f 4_services.yaml"
-
- - verify that pods are accessible via the created service (NOT mandatory by any means)
-   I am going to create one more pod for that:
-      "kubectl run wiremock --image=wiremock/wiremock:latest --command "sleep" -- 10000"
-
-   Then run such a command to see that the service can be accessed:
-      "kubectl exec wiremock -- curl http://sample-in-a.a.svc.cluster.local:8080/value"
-      "kubectl exec wiremock -- curl http://sample-in-default.default.svc.cluster.local:8080/actuator/health"
-
- - check the logs of configuration watcher, you must see a line like this:
-        added configmap informer for namespace : default with filter : spring.cloud.kubernetes.config.informer.enabled=true
-        ( which means we will only be looking in namespace 'default' for config maps that have the label
-         spring.cloud.kubernetes.config.informer.enabled=true )
-
- - change the configmap to a different value then 'initial' and do
-       "kubectl replace -f 1_configmap.yaml"
-
- - wait for at least 5 seconds (refresh delay config) and issue the curls again against the
-   pod IPs. The value is now going to be "changed".
 
 
 

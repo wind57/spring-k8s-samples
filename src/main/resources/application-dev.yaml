@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    kubernetes:
+      config:
+        enable-api: true
+        sources:
+          - namespace: default
+            name: sample-configmap-weird

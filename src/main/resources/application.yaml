@@ -16,16 +16,6 @@ management:
   endpoints.web.exposure.include: health,info,refresh,shutdown,env,restart
 
 spring:
-
-  # -- only needed if I want to run this as-is, not deployed
-  # -- meaning running as a main from intellij, connecting to the local cluster
-  #  main:
-  #    cloud-platform: kubernetes
-
-  # -- when you want to switch to the "config data" mode
-  #  config:
-  #    import: 'kubernetes:'
-
   cloud:
     kubernetes:
       config:
